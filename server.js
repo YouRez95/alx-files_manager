@@ -3,6 +3,9 @@ import appRoutes from './routes/index';
 
 const app = express();
 
+// Middelwares
+app.use(express.json());
+
 app.use('/', appRoutes);
 
 const PORT = process.env.PORT || 5000;
