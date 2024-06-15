@@ -1,7 +1,9 @@
 /*
 ------------ Testing redisClient class --------------
 import redisClient from "./utils/redis";
+*/
 
+import redisClient from './utils/redis';
 (async () => {
     console.log(await redisClient.isAlive());
     console.log(await redisClient.get('myKey'));
@@ -12,36 +14,36 @@ import redisClient from "./utils/redis";
         console.log(await redisClient.get('myKey'));
     }, 1000*10)
 })();
-*/
 
-import dbClient from './utils/db';
 
-const waitConnection = () => {
-    return new Promise((resolve, reject) => {
-        let i = 0;
-        const repeatFct = async () => {
-            await setTimeout(() => {
-                i += 1;
-                if (i >= 10) {
-                    reject()
-                }
-                else if(!dbClient.isAlive()) {
-                    repeatFct()
-                }
-                else {
-                    resolve()
-                }
-            }, 1000);
-        };
-        repeatFct();
-    })
-};
+// import dbClient from './utils/db';
 
-(async () => {
-    console.log(dbClient.isAlive());
-    await waitConnection();
-    console.log(dbClient.isAlive());
-    // await dbClient.createUser();
-    console.log(await dbClient.nbUsers());
-    console.log(await dbClient.nbFiles());
-})();
+// const waitConnection = () => {
+//     return new Promise((resolve, reject) => {
+//         let i = 0;
+//         const repeatFct = async () => {
+//             await setTimeout(() => {
+//                 i += 1;
+//                 if (i >= 10) {
+//                     reject()
+//                 }
+//                 else if(!dbClient.isAlive()) {
+//                     repeatFct()
+//                 }
+//                 else {
+//                     resolve()
+//                 }
+//             }, 1000);
+//         };
+//         repeatFct();
+//     })
+// };
+
+// (async () => {
+//     console.log(dbClient.isAlive());
+//     await waitConnection();
+//     console.log(dbClient.isAlive());
+//     // await dbClient.createUser();
+//     console.log(await dbClient.nbUsers());
+//     console.log(await dbClient.nbFiles());
+// })();

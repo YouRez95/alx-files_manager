@@ -29,8 +29,8 @@ class RedisClient {
    * an async function that check the connection
    * is is established or not
    */
-  async isAlive() {
-    await this.isReady;
+  isAlive() {
+    // await this.isReady;
     return this.client.connected;
   }
 
