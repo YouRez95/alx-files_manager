@@ -31,6 +31,13 @@ class DBClient {
     return user;
   }
 
+  async findUserById(id) {
+    const userId = new mongodb.ObjectId(id);
+    const user = await this.client.collection('users').findOne({ _id: userId });
+    const { password, ...rest } = user;
+    return { id: rest._id, email: rest.email };
+  }
+
   async saveUser(email, password) {
     const result = await this.client.collection('users').insertOne({ email, password });
     return result.insertedId;
