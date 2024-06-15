@@ -1,7 +1,7 @@
 import express from 'express';
 import { getStats, getStatus } from '../controllers/AppController';
 import postNew from '../controllers/UsersController';
-import { getConnect, getDisconnect, getMe } from '../controllers/AuthController'
+import { getConnect, getDisconnect, getMe } from '../controllers/AuthController';
 
 const router = express.Router();
 
