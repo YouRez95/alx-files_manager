@@ -19,10 +19,10 @@ class RedisClient {
     this.client.del = promisify(this.client.del).bind(this.client);
     this.client.on('error', (err) => console.log('Redis Client Error', err));
 
-    this.isReady = new Promise((resolve, reject) => {
-      this.client.on('ready', resolve);
-      this.client.on('error', reject);
-    });
+    // this.isReady = new Promise((resolve, reject) => {
+    //   this.client.on('ready', resolve);
+    //   this.client.on('error', reject);
+    // });
   }
 
   /**

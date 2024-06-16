@@ -47,6 +47,11 @@ class DBClient {
     const countFiles = await this.client.collection('files').estimatedDocumentCount();
     return countFiles;
   }
+
+  async saveFile(fileData) {
+    const result = await this.client.collection('files').insertOne(fileData);
+    return result.insertedId;
+  }
 }
 
 const dbClient = new DBClient();
