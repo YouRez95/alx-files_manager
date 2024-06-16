@@ -85,7 +85,8 @@ export async function postUpload(req, res) {
 // retrieve all users file documents for a specific parentId and with pagination
 export async function getIndex(req, res) {
   const token = req.get('X-Token');
-  let { parentId, page } = req.query;
+  const parentId = req.query.parentId || 0;
+  const page = Number(req.query.page) || 0;
   if (!token) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -94,16 +95,12 @@ export async function getIndex(req, res) {
   if (!value) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-
-  if (!parentId) {
-    parentId = 0;
+  const user = await dbClient.findUserById(value);
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  if (!page) {
-    page = 0;
-  }
-  page = Number(page);
-  const files = await dbClient.findFilesByParentId(parentId, page);
+  const files = await dbClient.findFilesByParentId(parentId, page, user.id);
   const transformedFiles = files.map((file) => {
     const { _id, localPath, ...rest } = file;
     return { id: _id, ...rest };
