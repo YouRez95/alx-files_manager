@@ -52,6 +52,19 @@ class DBClient {
     const result = await this.client.collection('files').insertOne(fileData);
     return result.insertedId;
   }
+
+  async findFileById(id) {
+    const fileId = new mongodb.ObjectId(id);
+    const file = await this.client.collection('files').findOne({ _id: fileId });
+    if (!file) {
+      return { message: 'Parent not found', error: true };
+    }
+    const { type } = file;
+    if (type !== 'folder') {
+      return { message: 'Parent is not a folder', error: true };
+    }
+    return { message: 'success', error: false };
+  }
 }
 
 const dbClient = new DBClient();

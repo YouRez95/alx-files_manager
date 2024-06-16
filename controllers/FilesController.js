@@ -24,6 +24,13 @@ export default async function postUpload(req, res) {
     return res.status(400).json({ error: 'Missing data' });
   }
   // TODO: If the parentId is set
+  if (parentId) {
+    const { message, error } = await dbClient.findFileById(parentId);
+    if (error) {
+      return res.status(400).json({ error: message });
+    }
+  }
+
   if (!parentId) {
     parentId = 0;
   }
