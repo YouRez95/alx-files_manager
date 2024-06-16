@@ -2,7 +2,7 @@ import express from 'express';
 import { getStats, getStatus } from '../controllers/AppController';
 import postNew from '../controllers/UsersController';
 import { getConnect, getDisconnect, getMe } from '../controllers/AuthController';
-import postUpload from '../controllers/FilesController';
+import { postUpload, getIndex, getShow } from '../controllers/FilesController';
 
 const router = express.Router();
 
@@ -35,5 +35,11 @@ router.get('/users/me', getMe);
 
 // POST /files => FilesController.postUpload
 router.post('/files', postUpload);
+
+// GET /files => FilesController.getIndex
+router.get('/files', getIndex);
+
+// GET /files/:id => FilesController.getShow
+router.get('/files/:id', getShow);
 
 module.exports = router;

@@ -53,7 +53,15 @@ class DBClient {
     return result.insertedId;
   }
 
-  async findFileById(id) {
+  async findFileByIdAndUserId(id, userId) {
+    const fileId = new mongodb.ObjectId(id);
+    const userIdObjectId = new mongodb.ObjectId(userId);
+    const file = await this.client.collection('files').findOne({ _id: fileId, userId: userIdObjectId });
+
+    return file;
+  }
+
+  async findFolderById(id) {
     const fileId = new mongodb.ObjectId(id);
     const file = await this.client.collection('files').findOne({ _id: fileId });
     if (!file) {
@@ -64,6 +72,16 @@ class DBClient {
       return { message: 'Parent is not a folder', error: true };
     }
     return { message: 'success', error: false };
+  }
+
+  async findFilesByParentId(parentId, page) {
+    const pipeline = [
+      { $match: { parentId } },
+      { $skip: page * 20 },
+      { $limit: 20 },
+    ];
+    const files = await this.client.collection('files').aggregate(pipeline).toArray();
+    return files;
   }
 }
 

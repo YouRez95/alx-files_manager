@@ -4,7 +4,7 @@ import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
 // create a new file in DB and in disk
-export default async function postUpload(req, res) {
+export async function postUpload(req, res) {
   const token = req.get('X-Token');
   const { name, type, data } = req.body;
   let { parentId, isPublic } = req.body;
@@ -23,9 +23,9 @@ export default async function postUpload(req, res) {
   if (type !== 'folder' && !data) {
     return res.status(400).json({ error: 'Missing data' });
   }
-  // TODO: If the parentId is set
+
   if (parentId) {
-    const { message, error } = await dbClient.findFileById(parentId);
+    const { message, error } = await dbClient.findFolderById(parentId);
     if (error) {
       return res.status(400).json({ error: message });
     }
@@ -80,4 +80,50 @@ export default async function postUpload(req, res) {
   const fileId = await dbClient.saveFile(fileData);
   const { _id, localPath, ...rest } = { id: fileId, ...fileData };
   return res.status(201).json({ ...rest });
+}
+
+// retrieve all users file documents for a specific parentId and with pagination
+export async function getIndex(req, res) {
+  const token = req.get('X-Token');
+  let { parentId, page } = req.query;
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const key = `auth_${token}`;
+  const value = await redisClient.get(key);
+  if (!value) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  if (!parentId) {
+    parentId = 0;
+  }
+
+  if (!page) {
+    page = 0;
+  }
+  page = Number(page);
+  const files = await dbClient.findFilesByParentId(parentId, page);
+  return res.json(files);
+}
+
+// retrieve the file document based on the ID
+export async function getShow(req, res) {
+  const token = req.get('X-Token');
+  const { id } = req.params;
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const key = `auth_${token}`;
+  const value = await redisClient.get(key);
+  if (!value) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const file = await dbClient.findFileByIdAndUserId(id, value);
+  if (!file) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+
+  const { _id, ...rest } = file;
+  return res.status(200).json({ id: _id, ...rest });
 }
