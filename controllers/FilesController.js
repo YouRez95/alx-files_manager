@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
+import { ObjectId } from 'mongodb';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
@@ -124,7 +125,9 @@ export async function getShow(req, res) {
   if (!user) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-
+  if (!ObjectId.isValid(id)) {
+    return res.status(404).json({ error: 'Not found' });
+  }
   const file = await dbClient.findFileByIdAndUserId(id, user.id);
   if (!file) {
     return res.status(404).json({ error: 'Not found' });
@@ -132,4 +135,64 @@ export async function getShow(req, res) {
 
   const { _id, ...rest } = file;
   return res.status(200).json({ id: _id, ...rest });
+}
+
+// should set isPublic to true on the file document based on the ID
+export async function putPublish(req, res) {
+  const token = req.get('X-Token');
+  const { id } = req.params;
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const key = `auth_${token}`;
+  const value = await redisClient.get(key);
+  if (!value) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const user = await dbClient.findUserById(value);
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+
+  const file = await dbClient.updateFile(id, true);
+  if (!file) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+
+  const { _id, localPath, ...rest } = file;
+  return res.json({ id: _id, ...rest });
+}
+
+// should set isPublic to false on the file document based on the ID
+export async function putUnpublish(req, res) {
+  const token = req.get('X-Token');
+  const { id } = req.params;
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const key = `auth_${token}`;
+  const value = await redisClient.get(key);
+  if (!value) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const user = await dbClient.findUserById(value);
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+
+  const file = await dbClient.updateFile(id, false);
+  if (!file) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+
+  const { _id, localPath, ...rest } = file;
+  return res.json({ id: _id, ...rest });
 }
