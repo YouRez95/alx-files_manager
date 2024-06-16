@@ -55,8 +55,7 @@ class DBClient {
 
   async findFileByIdAndUserId(id, userId) {
     const fileId = new mongodb.ObjectId(id);
-    const userIdObjectId = new mongodb.ObjectId(userId);
-    const file = await this.client.collection('files').findOne({ _id: fileId, userId: userIdObjectId });
+    const file = await this.client.collection('files').findOne({ _id: fileId, userId });
 
     return file;
   }

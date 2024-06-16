@@ -123,7 +123,12 @@ export async function getShow(req, res) {
   if (!value) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-  const file = await dbClient.findFileByIdAndUserId(id, value);
+  const user = await dbClient.findUserById(value);
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const file = await dbClient.findFileByIdAndUserId(id, user.id);
   if (!file) {
     return res.status(404).json({ error: 'Not found' });
   }
