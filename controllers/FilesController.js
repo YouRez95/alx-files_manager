@@ -105,7 +105,7 @@ export async function getIndex(req, res) {
   page = Number(page);
   const files = await dbClient.findFilesByParentId(parentId, page);
   const transformedFiles = files.map((file) => {
-    const { _id, ...rest } = file;
+    const { _id, localPath, ...rest } = file;
     return { id: _id, ...rest };
   });
   return res.json(transformedFiles);
