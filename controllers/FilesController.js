@@ -104,7 +104,11 @@ export async function getIndex(req, res) {
   }
   page = Number(page);
   const files = await dbClient.findFilesByParentId(parentId, page);
-  return res.json(files);
+  const transformedFiles = files.map((file) => {
+    const { _id, ...rest } = file;
+    return { id: _id, ...rest };
+  });
+  return res.json(transformedFiles);
 }
 
 // retrieve the file document based on the ID
