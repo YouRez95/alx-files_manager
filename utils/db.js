@@ -73,9 +73,9 @@ class DBClient {
     return { message: 'success', error: false };
   }
 
-  async findFilesByParentId(parentId, page) {
+  async findFilesByParentId(parentId, page, userId) {
     const pipeline = [
-      { $match: { parentId } },
+      { $match: { parentId, userId } },
       { $skip: page * 20 },
       { $limit: 20 },
     ];
