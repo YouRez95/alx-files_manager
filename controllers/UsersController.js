@@ -17,8 +17,5 @@ export default async function postNew(req, res) {
 
   const hashedPassword = sha1(password);
   const userId = await dbClient.saveUser(email, hashedPassword);
-  // if (!userId) {
-  //   return res.status(400).json({ error: 'Something wrong try again later' });
-  // }
   return res.status(201).json({ id: userId, email });
 }

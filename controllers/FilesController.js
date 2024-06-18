@@ -103,7 +103,7 @@ export async function getIndex(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const files = await dbClient.findFilesByParentId(parentId, page, user.id);
+  const files = await dbClient.findFilesByParentId(parentId, page);
   const transformedFiles = files.map((file) => {
     const { _id, localPath, ...rest } = file;
     return { id: _id, ...rest };
@@ -130,7 +130,7 @@ export async function getShow(req, res) {
   if (!ObjectId.isValid(id)) {
     return res.status(404).json({ error: 'Not found' });
   }
-  const file = await dbClient.findFileByIdAndUserId(id, user.id);
+  const file = await dbClient.findFileById(id);
   if (!file) {
     return res.status(404).json({ error: 'Not found' });
   }
