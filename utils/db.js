@@ -86,9 +86,15 @@ class DBClient {
   async updateFile(id, value) {
     const fileId = new mongodb.ObjectId(id);
     const file = await this.client.collection('files').findOneAndUpdate(
-      { _id: fileId }, { $set: { isPublic: value } }, { returnDocument: "after" }
+      { _id: fileId }, { $set: { isPublic: value } }, { returnDocument: 'after' },
     );
     return file.value;
+  }
+
+  async findFileById(id) {
+    const fileId = new mongodb.ObjectId(id);
+    const file = await this.client.collection('files').findOne({ _id: fileId });
+    return file;
   }
 }
 

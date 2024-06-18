@@ -3,7 +3,7 @@ import { getStats, getStatus } from '../controllers/AppController';
 import postNew from '../controllers/UsersController';
 import { getConnect, getDisconnect, getMe } from '../controllers/AuthController';
 import {
-  postUpload, getIndex, getShow, putPublish, putUnpublish,
+  postUpload, getIndex, getShow, putPublish, putUnpublish, getFile,
 } from '../controllers/FilesController';
 
 const router = express.Router();
@@ -49,5 +49,8 @@ router.put('/files/:id/publish', putPublish);
 
 // PUT /files/:id/unpublish => FilesController.putUnpublish
 router.put('/files/:id/unpublish', putUnpublish);
+
+// GET /files/:id/data => FilesController.getFile
+router.get('/files/:id/data', getFile);
 
 module.exports = router;
