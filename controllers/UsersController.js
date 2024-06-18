@@ -20,5 +20,5 @@ export default async function postNew(req, res) {
   // if (!userId) {
   //   return res.status(400).json({ error: 'Something wrong try again later' });
   // }
-  return res.json({ id: userId, email });
+  return res.status(201).json({ id: userId, email });
 }
